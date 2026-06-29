@@ -1,0 +1,42 @@
+###pom.xml
+<dependencies>
+
+    <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.13.2</version>
+        <scope>test</scope>
+    </dependency>
+
+</dependencies>
+
+
+
+
+###Calculator.java
+public class Calculator {
+
+    public int add(int a, int b) {
+        return a + b;
+    }
+}
+
+
+
+
+###CalculatorTest.java
+import static org.junit.Assert.assertEquals;
+import org.junit.Test;
+
+public class CalculatorTest {
+
+    @Test
+    public void testAdd() {
+
+        Calculator calculator = new Calculator();
+
+        int result = calculator.add(10, 20);
+
+        assertEquals(30, result);
+    }
+}
