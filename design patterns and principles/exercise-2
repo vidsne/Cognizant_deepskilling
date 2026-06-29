@@ -1,0 +1,132 @@
+###Document.java
+package com.factory;
+
+public interface Document {
+    void open();
+}
+
+
+
+
+
+###WordDocument.java
+package com.factory;
+
+public class WordDocument implements Document {
+
+    @Override
+    public void open() {
+        System.out.println("Opening Word Document");
+    }
+}
+
+
+
+
+###PdfDocument.java
+package com.factory;
+
+public class PdfDocument implements Document {
+
+    @Override
+    public void open() {
+        System.out.println("Opening PDF Document");
+    }
+}
+
+
+
+
+###ExcelDocument.java
+package com.factory;
+
+public class ExcelDocument implements Document {
+
+    @Override
+    public void open() {
+        System.out.println("Opening Excel Document");
+    }
+}
+
+
+
+
+###DocumentFactory.java
+package com.factory;
+
+public abstract class DocumentFactory {
+
+    public abstract Document createDocument();
+}
+
+
+
+
+
+###WordDocumentFactory.java
+package com.factory;
+
+public class WordDocumentFactory extends DocumentFactory {
+
+    @Override
+    public Document createDocument() {
+        return new WordDocument();
+    }
+}
+
+
+
+
+
+###PdfDocumentFactory.java
+package com.factory;
+
+public class PdfDocumentFactory extends DocumentFactory {
+
+    @Override
+    public Document createDocument() {
+        return new PdfDocument();
+    }
+}
+
+
+
+
+
+###ExcelDocumentFactory.java
+package com.factory;
+
+public class ExcelDocumentFactory extends DocumentFactory {
+
+    @Override
+    public Document createDocument() {
+        return new ExcelDocument();
+    }
+}
+
+
+
+
+
+
+###FactoryMethodTest.java
+package com.factory;
+
+public class FactoryMethodTest {
+
+    public static void main(String[] args) {
+
+        DocumentFactory wordFactory = new WordDocumentFactory();
+        Document word = wordFactory.createDocument();
+        word.open();
+
+        DocumentFactory pdfFactory = new PdfDocumentFactory();
+        Document pdf = pdfFactory.createDocument();
+        pdf.open();
+
+        DocumentFactory excelFactory = new ExcelDocumentFactory();
+        Document excel = excelFactory.createDocument();
+        excel.open();
+    }
+}
+
