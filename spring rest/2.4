@@ -1,0 +1,171 @@
+##src/main/resources/country.xml
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans
+       https://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="countryList" class="java.util.ArrayList">
+        <constructor-arg>
+            <list>
+
+                <bean class="com.cognizant.springlearn.Country">
+                    <property name="code" value="IN"/>
+                    <property name="name" value="India"/>
+                </bean>
+
+                <bean class="com.cognizant.springlearn.Country">
+                    <property name="code" value="US"/>
+                    <property name="name" value="United States"/>
+                </bean>
+
+                <bean class="com.cognizant.springlearn.Country">
+                    <property name="code" value="DE"/>
+                    <property name="name" value="Germany"/>
+                </bean>
+
+                <bean class="com.cognizant.springlearn.Country">
+                    <property name="code" value="JP"/>
+                    <property name="name" value="Japan"/>
+                </bean>
+
+            </list>
+        </constructor-arg>
+    </bean>
+
+</beans>
+
+
+
+
+
+
+##src/main/java/com/cognizant/springlearn/Country.java
+package com.cognizant.springlearn;
+
+public class Country {
+
+    private String code;
+    private String name;
+
+    public Country() {
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+}
+
+
+
+
+
+##src/main/java/com/cognizant/springlearn/service/CountryService.java
+package com.cognizant.springlearn.service;
+
+import java.util.List;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.stereotype.Service;
+
+import com.cognizant.springlearn.Country;
+
+@Service
+public class CountryService {
+
+    @SuppressWarnings("unchecked")
+    public Country getCountry(String code) {
+
+        ApplicationContext context =
+                new ClassPathXmlApplicationContext("country.xml");
+
+        List<Country> countryList =
+                (List<Country>) context.getBean("countryList");
+
+        Country country = countryList.stream()
+                .filter(c -> c.getCode().equalsIgnoreCase(code))
+                .findFirst()
+                .orElse(null);
+
+        ((ClassPathXmlApplicationContext) context).close();
+
+        return country;
+    }
+}
+
+
+
+
+
+##src/main/java/com/cognizant/springlearn/controller/CountryController.java
+package com.cognizant.springlearn.controller;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.cognizant.springlearn.Country;
+import com.cognizant.springlearn.service.CountryService;
+
+@RestController
+public class CountryController {
+
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(CountryController.class);
+
+    @Autowired
+    private CountryService countryService;
+
+    @GetMapping("/countries/{code}")
+    public Country getCountry(@PathVariable String code) {
+
+        LOGGER.info("START");
+
+        Country country = countryService.getCountry(code);
+
+        LOGGER.info("END");
+
+        return country;
+    }
+}
+
+
+
+
+
+##src/main/resources/application.properties
+server.port=8083
+
+logging.level.root=INFO
+logging.level.com.cognizant.springlearn=DEBUG
+
+
+
+
+### Test URL
+GET http://localhost:8083/countries/in
+
+
+### Response
+{
+  "code": "IN",
+  "name": "India"
+}
