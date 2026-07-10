@@ -1,0 +1,195 @@
+##Eureka Discovery Server
+###EurekaDiscoveryServerApplication.java
+package com.cognizant.eurekadiscoveryserver;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
+
+@SpringBootApplication
+@EnableEurekaServer
+public class EurekaDiscoveryServerApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(EurekaDiscoveryServerApplication.class, args);
+    }
+}
+
+
+
+###application.properties
+server.port=8761
+spring.application.name=eureka-discovery-server
+eureka.client.register-with-eureka=false
+eureka.client.fetch-registry=false
+logging.level.com.netflix.eureka=OFF
+logging.level.com.netflix.discovery=OFF
+
+
+
+
+#Account Microservice
+###AccountApplication.java
+package com.cognizant.account;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+
+@SpringBootApplication
+@EnableDiscoveryClient
+public class AccountApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(AccountApplication.class, args);
+    }
+}
+
+
+###application.properties
+spring.application.name=account-service
+server.port=8080
+eureka.client.service-url.defaultZone=http://localhost:8761/eureka
+
+
+
+
+#Loan Microservice
+###LoanApplication.java
+package com.cognizant.loan;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+
+@SpringBootApplication
+@EnableDiscoveryClient
+public class LoanApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(LoanApplication.class, args);
+    }
+}
+
+
+
+###application.properties
+spring.application.name=loan-service
+server.port=8081
+eureka.client.service-url.defaultZone=http://localhost:8761/eureka
+
+
+
+
+
+#Greet Service
+###GreetApplication.java
+package com.cognizant.greetservice;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class GreetApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(GreetApplication.class, args);
+    }
+}
+
+
+
+
+###GreetController.java
+package com.cognizant.greetservice.controller;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class GreetController {
+
+    @GetMapping("/greet")
+    public String greet() {
+        return "Hello World";
+    }
+}
+
+
+
+###application.properties
+spring.application.name=greet-service
+server.port=8082
+eureka.client.service-url.defaultZone=http://localhost:8761/eureka
+
+
+
+#API Gateway
+###ApiGatewayApplication.java
+package com.cognizant.apigateway;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class ApiGatewayApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(ApiGatewayApplication.class, args);
+    }
+}
+
+
+###application.properties
+spring.application.name=api-gateway
+server.port=9090
+eureka.client.service-url.defaultZone=http://localhost:8761/eureka
+spring.cloud.gateway.discovery.locator.enabled=true
+spring.cloud.gateway.discovery.locator.lower-case-service-id=true
+
+
+
+
+
+#Global Filter
+###LogFilter.java
+package com.cognizant.apigateway.filter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.cloud.gateway.filter.GatewayFilterChain;
+import org.springframework.cloud.gateway.filter.GlobalFilter;
+import org.springframework.stereotype.Component;
+import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
+
+@Component
+public class LogFilter implements GlobalFilter {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(LogFilter.class);
+
+    @Override
+    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+
+        LOGGER.info("Request Path: {}", exchange.getRequest().getURI());
+
+        return chain.filter(exchange);
+    }
+}
+
+
+
+
+
+## URLs
+Eureka Dashboard
+http://localhost:8761
+
+Greet Service
+http://localhost:8082/greet
+
+Through API Gateway
+http://localhost:9090/greet-service/greet
+
+Account Service
+http://localhost:8080/accounts/00987987973432
+
+Loan Service
+http://localhost:8081/loans/H00987987972342
