@@ -1,0 +1,47 @@
+
+import React, { useState } from "react";
+
+function GuestPage() {
+  return (
+    <div>
+      <h2>Flight Details</h2>
+      <p>Flight: AI-202</p>
+      <p>From: Delhi</p>
+      <p>To: Mumbai</p>
+      <p>Time: 10:30 AM</p>
+      <p>Please login to book your ticket.</p>
+    </div>
+  );
+}
+
+function UserPage() {
+  return (
+    <div>
+      <h2>Welcome User</h2>
+      <p>You can now book your flight tickets.</p>
+      <button>Book Ticket</button>
+    </div>
+  );
+}
+
+function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  return (
+    <div style={{ padding: "20px" }}>
+      <h1>Ticket Booking App</h1>
+
+      {isLoggedIn ? <UserPage /> : <GuestPage />}
+
+      <br />
+
+      {isLoggedIn ? (
+        <button onClick={() => setIsLoggedIn(false)}>Logout</button>
+      ) : (
+        <button onClick={() => setIsLoggedIn(true)}>Login</button>
+      )}
+    </div>
+  );
+}
+
+export default App;
